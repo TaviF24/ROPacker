@@ -302,6 +302,7 @@ bool runPE(BYTE* peData, size_t peSize) {
     PROCESS_INFORMATION pi = {};
     if (!CreateProcessW(tempFile, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
         DeleteFileW(tempFile);
+        printf("[FAIL] Create process temp file\n");
         return false;
     }
 
