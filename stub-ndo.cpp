@@ -286,7 +286,7 @@ bool runPE(BYTE* peData, size_t peSize) {
     GetTempPathW(MAX_PATH, tempPath);
     GetTempFileNameW(tempPath, L"tmp", 0, tempFile);
 
-    FILE* fp = _wfopen(tempFile, L"wb"); // Use wide version for wchar_t filename
+    FILE* fp = _wfopen(tempFile, L"wb");
     if(!fp){
         printf("[FAIL] Open temp file\n");
         return false;
@@ -456,6 +456,5 @@ int main(int argc, char* argv[]){
     if(!starting(getCurrentFileName(argv[0]))){
         printf("[FAIL] Run\n"); 
     }
-    printf("ok\n");
     return 0;
 }
