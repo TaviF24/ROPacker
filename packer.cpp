@@ -11,6 +11,7 @@
 using namespace std;
 
 #define STUB_FILE "stub.exe"
+#define STUB_NDO_FILE "stub-ndo.exe"
 
 bool is64bitArchitecture() {
     SYSTEM_INFO sysInfo = {};
@@ -249,9 +250,21 @@ long getSizeOfFile(FILE* file){
     return size;
 }
 
-bool addSection(const char* sectionName, const char* inputFileName, const char* outputFileName){
+bool addSection(const char* sectionName, const char* inputFileName, const char* outputFileName, int flag){
 
-    FILE* stubFile = fopen("stub.exe", "rb");
+    FILE* stubFile;
+    switch (flag)
+    {
+        case 0:
+            stubFile = fopen(STUB_FILE, "rb");
+            break;
+        case 1:
+            stubFile = fopen(STUB_NDO_FILE, "rb");
+            break;
+        default:
+            break;
+    }
+
     if(stubFile == NULL){
         printf("[FAIL] Open stub file\n");
         return false;
@@ -471,10 +484,21 @@ bool addSection(const char* sectionName, const char* inputFileName, const char* 
 
 int main(int argc, char* argv[]){
     if(argc < 3){
-        printf("[FAIL] Incorrect number of parameters. Correct form: packer.exe <inputFile.exe> <outputFile.exe>");
+        printf("[FAIL] Incorrect number of parameters. Correct form: packer.exe <inputFile.exe> <outputFile.exe> [args]");
         return 0;
     }
-    if(is64bitArchitecture() && addSection(".debug", argv[1], argv[2]) && recalculateCheckSum(argv[2])){
+
+    int flag = 0;
+    if(argc == 4){
+        if(strncmp(argv[3], "-ndo", 4) == 0 && strlen(argv[3]) == 4){
+            flag = 1;
+        }else{
+            printf("[FAIL] Unknown argument %s", argv[3]);
+            return 0;
+        }
+    }
+
+    if(is64bitArchitecture() && addSection(".debug", argv[1], argv[2], flag) && recalculateCheckSum(argv[2])){
         printf("[SUCCESS] Created new packed file\n");
     }else{
         printf("[FAIL] Created new packed file\n");

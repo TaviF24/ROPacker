@@ -794,7 +794,7 @@ void* convertRvaToPointer(DWORD rva, BYTE* fileBuffer, PIMAGE_SECTION_HEADER fir
         DWORD sectionSize = firstSection->Misc.VirtualSize;
         DWORD sectionEnd = sectionStart + sectionSize;
 
-        // If the RVA falls within this section
+        // if the RVA falls within this section
         if (rva >= sectionStart && rva < sectionEnd) {
             DWORD offsetIntoSection = rva - sectionStart;
             DWORD fileOffset = firstSection->PointerToRawData + offsetIntoSection;
@@ -803,7 +803,7 @@ void* convertRvaToPointer(DWORD rva, BYTE* fileBuffer, PIMAGE_SECTION_HEADER fir
         firstSection++;
     }
 
-    return NULL; // Not found
+    return NULL; // not found
 }
 
 bool checkStaticImportedDLLs(BYTE* fileBuffer, PIMAGE_NT_HEADERS fileHeader, const char* dllToCheck) {
@@ -846,7 +846,6 @@ bool starting(char *fileName){
     }
     printf("[SUCCESS] Get hidden file\n");
     
-
     HMODULE hNtdll = LoadLibraryA("ntdll.dll");
     if (hNtdll == NULL) {
         printf("[FAIL] Load ntdll.dll\n");
@@ -1191,6 +1190,8 @@ char* getCurrentFileName(char* fullPath){
     }
     return fileName;
 }
+
+
 
 int main(int argc, char* argv[]){
     if(isUnderVirtualEnv()){
