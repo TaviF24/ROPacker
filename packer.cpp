@@ -250,7 +250,13 @@ long getSizeOfFile(FILE* file){
     return size;
 }
 
-bool addSection(const char* sectionName, const char* inputFileName, const char* outputFileName, int flag){
+bool addSection(const char* sectionName,  char* inputFileName, char* outputFileName, int flag){
+
+    if((strlen(inputFileName) == strlen(outputFileName)) && (strcmp(inputFileName, outputFileName) == 0)){
+        printf("[FAIL] Same file name\n");
+        return false;
+    }
+
 
     FILE* stubFile;
     switch (flag)
