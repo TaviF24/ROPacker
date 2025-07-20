@@ -191,6 +191,13 @@ BYTE* getGadgetAddress(OffsetsRop offsetRop){
     return NULL;
 }
 
+bool matchGadget(HMODULE moduleBase, size_t offset, const std::vector<uint8_t>& expectedOpcodes) {
+    // Needed in case of different versions of dlls, just to be sure the expected gadget is there :)
+
+    const uint8_t* address = reinterpret_cast<const uint8_t*>(reinterpret_cast<uintptr_t>(moduleBase) + offset);
+    return std::memcmp(address, expectedOpcodes.data(), expectedOpcodes.size()) == 0;
+}
+
 uInt replaceAll_mov_reg_imm32(BYTE* targetMemoryAddress, DWORD textSize, HANDLE hProcess, BYTE* ropMem, BOOL hasThirdDll) {
     
     std::unordered_map<x86_reg, OffsetsRop> popGadgets = {
@@ -408,6 +415,24 @@ std::vector<CallMatch> findAll_call_rel32(BYTE* code, size_t size) {
 uInt replaceAll_call_rel32(BYTE* targetMemoryAddress, DWORD textSize, HANDLE hProcess, BYTE* ropMem){
     long popGadget = 0x137d;
     long pushGadgetNtdll = 0x615a9;
+
+    HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+    if (!ntdll) {
+        printf("[FAIL] Load ntdll.dll\n");
+        return 0;
+    }
+
+    std::vector<uint8_t> expected = {
+        0x53,             // push rbx
+        0xC2, 0x03, 0x00  // ret 3
+    };
+
+    bool gadgetIsPresent = matchGadget(ntdll, pushGadgetNtdll, expected);
+
+    if(!gadgetIsPresent){
+        printf("[FAIL] Expected gadget is not present for call istructions\n");
+        return 0;
+    }
 
     // void* POP_GADGET = getGadgetAddress({0x137d, -1,-1});
     void* PUSH_GADGET = getGadgetAddress({pushGadgetNtdll, -1,-1});
